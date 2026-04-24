@@ -1,7 +1,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cstdlib>
+#include <ctime>
 
+#include "Battle.h"
 #include "Player.h"
 #include "Monster.h"
 
@@ -13,7 +16,10 @@ int main(int argc, char* argv[])
     string characterClass = "None";
     int classChoiceInput;
     vector<int> classBonus;
+    int turn = 0;
+    int basenum = 3;
     
+    system("cls");
     cout << "nickname : ";
     cin >> nick;
     cout << "\n";
@@ -56,10 +62,10 @@ int main(int argc, char* argv[])
         break;
     }
     cout << "\n";
-    
+    system("cls");
     Player player = Player(classBonus[0],classBonus[1],classBonus[2],classBonus[3],nick,characterClass);
     cout << "Creation Bonus! \n\n";
-    player.gainExp(0);
+    player.gainExp(1);
     
     cout << "status \n";
     cout << "level: " << player.getLevel() << "\n";
@@ -68,39 +74,88 @@ int main(int argc, char* argv[])
     cout << "SPD: " << player.getSpd() << "\n";
     cout << "HP: " << player.getHp() << " / " << player.getMaxHp() << "\n\n";
     
+    system("pause");
+    
+    srand((unsigned int)time(NULL));
     while (player.isAlive())
     {
-        int minDifficulty = player.getLevel()-2;
-        int maxDifficulty = player.getLevel();
+        system("cls");
+        cout << "Day " << ++turn << " start\n";
+        int minDifficulty = player.getLevel();
+        int maxDifficulty = player.getLevel()+2;
         int gateChoice;
         vector<int> monBaseStat;
         cout << "choose the gate, Hunter " << player.getNick() << "\n";
-        cout << "1. Green Gate (-2 ~ 0 to difficulty) \n";
-        cout << "2. Yellow Gate (-1 ~ +1 to difficulty) \n";
-        cout << "3. Red Gate (0 ~ 2 to difficulty) \n";
-        cout << "4. Chaos Gate (-5 ~ +5 to difficulty) \n";
+        cout << "1. Green Gate (0 ~ 2 to difficulty) \n";
+        cout << "2. Yellow Gate (+1 ~ +3 to difficulty) \n";
+        cout << "3. Red Gate (+2 ~ +4 to difficulty) \n";
+        cout << "4. Chaos Gate (0 ~ +10 to difficulty) \n";
         cin >> gateChoice;
         
         switch (gateChoice)
         {
         case 1:
-            cout << "Entered the green gate";
+            cout << "Entered the green gate\n";
             break;
         case 2:
+            cout << "Entered the Yellow gate\n";
             minDifficulty +=1;
             maxDifficulty +=1;
             break;
         case 3:
+            cout << "Entered the Red gate\n";
             minDifficulty +=2;
             maxDifficulty +=2;
             break;
         case 4:
-            minDifficulty -=3;
-            maxDifficulty +=5;
+            cout << "Entered the Chaos gate\n";
+            maxDifficulty +=8;
             break;
         default:
+            cout << "Entered the Chaos gate\n";
+            maxDifficulty +=8;
             break;
         }
+        
+        vector<Monster> monsters;
+        int spawnRange = maxDifficulty - minDifficulty;
+        int numMonsters = basenum + rand()%3 + (turn/7);
+        cout << numMonsters << " monsters in gate\n";
+        cout << "Scouting results detected, ";
+        for (int i=0;i<numMonsters;i++)
+        {
+            int range = spawnRange +1;
+            int spawnPower = minDifficulty + rand()%range;
+            cout << spawnPower << " Rank, ";
+            monBaseStat = {0,0,0,0};
+            for (int j=0;j<spawnPower;j++)
+            {
+                int stat = rand()%4;
+                monBaseStat[stat]++;
+            }
+            int atk = 1 + (turn/7) + monBaseStat[0];
+            int def = 1 + (turn/7) + monBaseStat[1];
+            int spd = 1 + (turn/7) + monBaseStat[2];
+            int maxHp = 10 * (1 + (turn/7) + monBaseStat[3]);
+            monsters.push_back(Monster(atk,def,spd,maxHp,"",spawnPower));
+        }
+        cout << "monsters respectively.\n";
+        system("pause");
+        
+        for (Monster mon : monsters)
+        {
+            mon.naming();
+            Battle battle = Battle(player,mon);
+            bool result = battle.run();
+            if (!result) break;
+        }
+        
+        if (player.isAlive()) break;
+    }
+    if (!player.isAlive())
+    {
+        int score = player.getScore();
+        cout << "gameover! score: " << score << " \n";
     }
     
     return 0;

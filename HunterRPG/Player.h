@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <string>
 #include <vector>
-#include "Character.h"'
+#include "Character.h"
 
 using namespace std;
 
@@ -22,4 +22,5 @@ public:
     
     void gainExp(int amount);
     void Loot(int price = 1);
+    int getScore();
 };
