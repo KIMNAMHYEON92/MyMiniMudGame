@@ -1,62 +1,68 @@
 ﻿#include "Battle.h"
+#include "UI.h"
 #include <iostream>
+
+using namespace std;
 
 Battle::Battle(Player& player, Monster& monster): player(player), monster(monster){}
 
 bool Battle::run()
 {
-    system("cls");
-    cout << "Battle Start with " << monster.getName() << "\n";
-    cout << "ATK: " << monster.getAtk() << ", DEF: " << monster.getDef() << ", SPD: " << monster.getSpd() << ", HP: " << monster.getHp() << "\n";
+    UI::ClearScreen();
+    UI::PrintTitle("Battle Start with " + monster.getName());
+    UI::PrintMonsterStatus(monster.getName(), monster.getExpReward(), monster.getHp(), monster.getMaxHp(), monster.getAtk(), monster.getDef(), monster.getSpd());
+    cout << "\n";
     
-    system("pause");
+    UI::Pause();
     while (player.getHp()>0 && monster.getHp()>0)
     {
-        system("cls");
+        UI::ClearScreen();
+        UI::PrintTitle("Battle: " + player.getNick() + " vs " + monster.getName());
+        cout << "\n";
+
         if (player.getSpd()>monster.getSpd())
         {
             monster.takeDamage(player.attack());
-            cout << player.getNick() << " attack! " << monster.getName() << "'s HP -" << player.getAtk() << "\n";
+            UI::PrintMessage(player.getNick() + " attacks! " + monster.getName() + "'s HP -" + to_string(player.getAtk()));
             if (monster.isAlive())
             {
                 player.takeDamage(monster.attack());
-                cout << monster.getName() << " attack! " << player.getNick() << "'s HP -" << monster.getAtk() << "\n";
+                UI::PrintMessage(monster.getName() + " attacks! " + player.getNick() + "'s HP -" + to_string(monster.getAtk()));
             }
             else
             {
-                cout << "Last hit to " << monster.getName() << " !\n";
+                UI::PrintMessage("Last hit to " + monster.getName() + "!");
             }
         }
         else
         {
             player.takeDamage(monster.attack());
-            cout << monster.getName() << " attack! " << player.getNick() << "'s HP -" << monster.getAtk() << "\n";
+            UI::PrintMessage(monster.getName() + " attacks! " + player.getNick() + "'s HP -" + to_string(monster.getAtk()));
             if (player.isAlive())
             {
                 monster.takeDamage(player.attack());
-                cout << player.getNick() << " attack! " << monster.getName() << "'s HP -" << player.getAtk() << "\n";
+                UI::PrintMessage(player.getNick() + " attacks! " + monster.getName() + "'s HP -" + to_string(player.getAtk()));
             }
             else
             {
-                cout << "Last hit to " << player.getNick() << " !\n";
+                UI::PrintMessage("Last hit to " + player.getNick() + "!");
             }
         }
         cout << "\n";
-        cout << player.getNick() << "\n";
-        cout << "HP: " << player.getHp() << " / " << player.getMaxHp();
-        cout << ", (LEVEL: " << player.getLevel() << ", ATK: " << player.getAtk();
-        cout << ", DEF: " << player.getDef() << ", SPD: " << player.getSpd() << ")\n";
-        cout << monster.getName() << "\n";
-        cout << "HP: " << monster.getHp() << " / " << monster.getMaxHp();
-        cout << ", (RANK: " << monster.getExpReward() << ", ATK: " << monster.getAtk();
-        cout << ", DEF: " << monster.getDef() << ", SPD: " << monster.getSpd() << ")\n";
-        system("pause");
+
+        UI::PrintHealthBar(player.getNick(), player.getHp(), player.getMaxHp());
+        UI::PrintHealthBar(monster.getName(), monster.getHp(), monster.getMaxHp());
+        cout << "\n";
+
+        UI::Pause();
     }
     if (player.isAlive())
     {
         player.gainExp(monster.getExpReward());
         player.Loot(monster.getExpReward());
     }
-    system("pause");
+
+    cout << "\n";
+    UI::Pause();
     return player.isAlive();
 }
