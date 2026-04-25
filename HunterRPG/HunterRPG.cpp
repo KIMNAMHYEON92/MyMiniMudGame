@@ -90,6 +90,7 @@ int main(int argc, char* argv[])
         cout << "2. Yellow Gate (+1 ~ +3 to difficulty) \n";
         cout << "3. Red Gate (+2 ~ +4 to difficulty) \n";
         cout << "4. Chaos Gate (0 ~ +10 to difficulty) \n";
+        cout << "choose your gate number : ";
         cin >> gateChoice;
         
         switch (gateChoice)
@@ -150,7 +151,7 @@ int main(int argc, char* argv[])
             if (!result) break;
         }
         
-        if (player.isAlive()) break;
+        if (!player.isAlive()) break;
     }
     if (!player.isAlive())
     {

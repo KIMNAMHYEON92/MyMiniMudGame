@@ -52,7 +52,11 @@ bool Battle::run()
         cout << ", DEF: " << monster.getDef() << ", SPD: " << monster.getSpd() << ")\n";
         system("pause");
     }
-    if (player.isAlive()) player.gainExp(monster.getExpReward());
+    if (player.isAlive())
+    {
+        player.gainExp(monster.getExpReward());
+        player.Loot(monster.getExpReward());
+    }
     system("pause");
     return player.isAlive();
 }

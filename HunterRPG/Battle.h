@@ -5,8 +5,8 @@
 class Battle
 {
 private: 
-    Player player;
-    Monster monster;
+    Player& player;
+    Monster& monster;
 public:
     Battle(Player& player, Monster& monster);
     bool run();
