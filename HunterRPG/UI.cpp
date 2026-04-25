@@ -79,7 +79,7 @@ void UI::PrintMonsterStatus(const string& name, int rank, int hp, int maxHp, int
 
 void UI::PrintMessage(const string& msg)
 {
-    cout << "  ▶ " << msg << "\n";
+    cout << "  * " << msg << "\n";
 }
 
 void UI::PrintHealthBar(const string& name, int currentHp, int maxHp, int length)

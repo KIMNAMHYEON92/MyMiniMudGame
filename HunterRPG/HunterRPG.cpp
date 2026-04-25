@@ -69,8 +69,10 @@ int main(int argc, char* argv[])
     UI::ClearScreen();
     Player player = Player(classBonus[0],classBonus[1],classBonus[2],classBonus[3],nick,characterClass);
     UI::PrintMessage("Creation Bonus!");
-    player.gainExp(1);
+    player.gainExp(5);
+    UI::Pause();
     
+    UI::ClearScreen();
     UI::PrintStatus(player.getNick(), player.getCharacterClass(), player.getLevel(), player.getHp(), player.getMaxHp(), player.getAtk(), player.getDef(), player.getSpd());
     cout << "\n";
     
@@ -125,7 +127,7 @@ int main(int argc, char* argv[])
         int spawnRange = maxDifficulty - minDifficulty;
         int numMonsters = basenum + rand()%3 + (turn/7);
         UI::PrintMessage(to_string(numMonsters) + " monsters in gate");
-        cout << "  ▶ Scouting results detected: ";
+        cout << "  * Scouting results detected: ";
         for (int i=0;i<numMonsters;i++)
         {
             int range = spawnRange +1;
