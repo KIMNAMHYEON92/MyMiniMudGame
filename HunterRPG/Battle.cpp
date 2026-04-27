@@ -1,5 +1,6 @@
 ﻿#include "Battle.h"
 #include "UI.h"
+#include "AsciiArtManager.h"
 #include <iostream>
 
 using namespace std;
@@ -10,6 +11,7 @@ bool Battle::run()
 {
     UI::ClearScreen();
     UI::PrintTitle("Battle Start with " + monster.getName());
+    cout << AsciiArtManager::GenerateMonsterArt(monster.getAtk(), monster.getDef(), monster.getSpd(), monster.getMaxHp()) << "\n";
     UI::PrintMonsterStatus(monster.getName(), monster.getExpReward(), monster.getHp(), monster.getMaxHp(), monster.getAtk(), monster.getDef(), monster.getSpd());
     cout << "\n";
     
