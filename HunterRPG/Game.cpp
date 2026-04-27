@@ -2,8 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <cstdlib>
-#include <ctime>
+#include <random>
 
 #include "Battle.h"
 #include "Monster.h"
@@ -20,6 +19,13 @@ void Game::run() {
         delete player;
         player = nullptr;
     }
+}
+int Game::irand(int min,int max)
+{    
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<int> dis(min, max);
+    return dis(gen);
 }
 
 void Game::createPlayer() {
@@ -91,8 +97,9 @@ void Game::createPlayer() {
 }
 
 void Game::turnLoop() {
-    srand((unsigned int)time(NULL));
+    
     int basenum = 3;
+    
 
     while (player->isAlive())
     {
@@ -140,18 +147,18 @@ void Game::turnLoop() {
 
         vector<Monster> monsters;
         int spawnRange = maxDifficulty - minDifficulty;
-        int numMonsters = basenum + rand()%3 + (turn/7);
+        int numMonsters = basenum + irand(0,2) + (turn/7);
         UI::PrintMessage(to_string(numMonsters) + " monsters in gate");
         cout << "  * Scouting results detected: ";
         for (int i=0;i<numMonsters;i++)
         {
             int range = spawnRange +1;
-            int spawnPower = minDifficulty + rand()%range;
+            int spawnPower = minDifficulty + irand(0,range-1);
             cout << spawnPower << " Rank, ";
             monBaseStat = {0,0,0,0};
             for (int j=0;j<spawnPower;j++)
             {
-                int stat = rand()%4;
+                int stat = irand(0,3);
                 monBaseStat[stat]++;
             }
             int atk = 1 + (turn/7) + monBaseStat[0];

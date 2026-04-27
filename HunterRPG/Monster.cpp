@@ -8,7 +8,7 @@ void Monster::naming()
     vector<int> baseStat = {atk, def, spd, maxHp / 10};
 
     vector<string> prefix = {"Sunlight ", "Moonlight ", "Hot ", "Cold ", "Healthy ", "Solid ", "Dirty "};
-    vector<string> suffix = {"Pride ", "Gluttony ", "Greed ", "Sloth ", "Lust ", "Wrath ", "Envy "};
+    vector<string> suffix = {"Pride, ", "Gluttony, ", "Greed, ", "Sloth, ", "Lust, ", "Wrath, ", "Envy, "};
     vector<string> element = {"Fire ", "Wind ", "Water ", "Soil "};
     vector<string> tribe = {"Beast", "Demon", "Undead", "Villain", "Ghost"};
 
@@ -23,5 +23,6 @@ void Monster::naming()
         int index = baseStat[i] % currentCategory.size();
         
         name += currentCategory[index];
+        code.push_back(index);
     }
 }

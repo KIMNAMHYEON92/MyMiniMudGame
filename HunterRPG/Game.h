@@ -5,6 +5,7 @@ class Game {
 public:
     void run();
 private:
+    int irand(int min,int max);
     void createPlayer();
     void turnLoop();
     void gameOver();
