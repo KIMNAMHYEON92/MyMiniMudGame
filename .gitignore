@@ -3,3 +3,10 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/game
+
+# Compiled binaries and build artifacts
+test_build
+game
+*.o
+*.out
+*.exe
