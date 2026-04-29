@@ -18,7 +18,9 @@ private:
 public:
     Player(int atk, int def, int spd, int maxHp, const string& nick, std::unique_ptr<Job> job);
     string getNick(){return nick;}
+    string getName() const override { return nick; }
     string getCharacterClass(){return currentJob->getName();}
+    std::vector<Skill*> getActiveSkills() const override { return currentJob->getSkills(); }
     int getExp(){return exp;}
     int getExpToNextLevel(){return expToNextLevel;}
     

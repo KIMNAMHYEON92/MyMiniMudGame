@@ -1,4 +1,4 @@
-# Hunter RPG (v2.0 Update)
+# Hunter RPG (v3.0 Update)
 
 Hunter RPG is a text-based C++ Role-Playing Game (MUD style) where you step into the shoes of a newly awakened Hunter.
 
@@ -6,6 +6,10 @@ Explore different gates, battle procedurally generated monsters, and survive as 
 
 ## Features
 
+*   **Data-Driven Ascii Art (File I/O):** ASCII components for monsters are dynamically loaded from external text files.
+*   **Condition-Based Skill System:** Introduces an advanced trigger system (`ON_TURN_START`, `ON_ATTACK`, `ON_DEFEND`) for dynamically activating class skills.
+*   **Dynamic LUCK Probability Algorithm:** Implements an advantage/disadvantage system to impact probability rolls for combat skills.
+*   **Temporary Battle Buff System:** Stat modifiers can now be dynamically altered through buffs and accurately reset after every encounter.
 *   **Strategy Pattern Job System & 10x Stat Scaling:** Jobs like Melee Dealer, Range Dealer, Tanker, and Healer are implemented as strategies providing dynamic stat multipliers. All baseline stats are scaled by 10x for precision.
 *   **DEF-based Damage Reduction Formula:** Taking damage now effectively reduces impact based on Defense via `100.0 / (100.0 + DEF)` reduction formula.
 *   **Item Appraisal & Gate Loot Box System:** Dropped items are no longer instantly equipped but instead safely stored. At the end of a gate, a dedicated Appraisal UI phase allows carefully comparing and selecting items.

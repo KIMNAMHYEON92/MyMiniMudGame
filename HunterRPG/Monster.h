@@ -15,7 +15,7 @@ private:
 public:
     Monster(int atk, int def, int spd, int maxHp, const string& name, int expReward);
     int getExpReward() const { return expReward;}
-    string getName() const { return name; }
+    string getName() const override { return name; }
     vector<int> getCode() const { return code; }
     void naming();
 };
