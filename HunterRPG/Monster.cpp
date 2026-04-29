@@ -5,7 +5,7 @@ Monster::Monster(int atk, int def, int spd, int maxHp, const string& name, int e
 
 void Monster::naming()
 {
-    vector<int> baseStat = {atk, def, spd, maxHp / 10};
+    vector<int> stats = {getFinalAtk(), getFinalDef(), getFinalSpd(), getFinalMaxHp() / 10};
 
     vector<string> prefix = {"Sunlight ", "Moonlight ", "Hot ", "Cold ", "Healthy ", "Solid ", "Dirty "};
     vector<string> suffix = {"Pride, ", "Gluttony, ", "Greed, ", "Sloth, ", "Lust, ", "Wrath, ", "Envy, "};
@@ -20,7 +20,7 @@ void Monster::naming()
     {
         const vector<string>& currentCategory = categories[i];
         
-        int index = baseStat[i] % currentCategory.size();
+        int index = stats[i] % currentCategory.size();
         
         name += currentCategory[index];
         code.push_back(index);

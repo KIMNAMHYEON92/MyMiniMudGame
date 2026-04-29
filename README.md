@@ -1,4 +1,4 @@
-# Hunter RPG
+# Hunter RPG (v2.0 Update)
 
 Hunter RPG is a text-based C++ Role-Playing Game (MUD style) where you step into the shoes of a newly awakened Hunter.
 
@@ -6,7 +6,11 @@ Explore different gates, battle procedurally generated monsters, and survive as 
 
 ## Features
 
-*   **Procedural Monster Generation:** Both the names and the ASCII art of monsters are dynamically generated based on their stats (ATK, DEF, SPD, MAX HP). Every monster is uniquely assembled from a variety of prefixes, suffixes, elements, tribes, and visual components (heads, bodies, weapons, legs).
+*   **Strategy Pattern Job System & 10x Stat Scaling:** Jobs like Melee Dealer, Range Dealer, Tanker, and Healer are implemented as strategies providing dynamic stat multipliers. All baseline stats are scaled by 10x for precision.
+*   **DEF-based Damage Reduction Formula:** Taking damage now effectively reduces impact based on Defense via `100.0 / (100.0 + DEF)` reduction formula.
+*   **Item Appraisal & Gate Loot Box System:** Dropped items are no longer instantly equipped but instead safely stored. At the end of a gate, a dedicated Appraisal UI phase allows carefully comparing and selecting items.
+*   **Gate Progression Visuals & Battle Impact UX:** Clear visual indicators displaying your progression in a gate (`[Entrance] -> [*YOU*] -> [M2] -> [Clear]`). Attacks are emphasized with slight delay ticks and ASCII action text (e.g. `/// SLASH ///`, `*** SMASH ***`).
+*   **Procedural Monster Generation:** Both the names and the ASCII art of monsters are dynamically generated based on their stats (ATK, DEF, SPD, MAX HP). Every monster is uniquely assembled from a variety of prefixes, suffixes, elements, tribes, and visual components.
 *   **Multiple Character Classes:** Choose from 5 distinct classes, each with its own stat bonuses and starting stats:
     *   Melee Dealer
     *   Range Dealer
@@ -26,6 +30,7 @@ Explore different gates, battle procedurally generated monsters, and survive as 
 *   `HunterRPG/Monster.cpp`, `.h`: Represents enemy characters and their procedural naming logic.
 *   `HunterRPG/Battle.cpp`, `.h`: Manages the combat logic between a Player and a Monster.
 *   `HunterRPG/UI.cpp`, `.h`: Handles all text-based UI rendering, including menus, status screens, and health bars.
+*   `HunterRPG/Job.h`: Handles the dynamic multiplier strategy implementations for Character classes.
 
 ## How to Build and Run
 

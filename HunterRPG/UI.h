@@ -29,4 +29,7 @@ public:
     
     // 체력바(HP Bar) 시각화 출력
     static void PrintHealthBar(const std::string& name, int currentHp, int maxHp, int length = 20);
+
+    // Gate Progression Visual
+    static void PrintGateProgression(int currentIndex, int totalMonsters);
 };
