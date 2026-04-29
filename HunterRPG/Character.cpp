@@ -4,10 +4,19 @@ Character::Character(int atk, int def, int spd, int maxHp)
 {
     baseStat = {atk, def, spd, maxHp};
     itemStat = {0, 0, 0, 0};
+    buffStat = {0, 0, 0, 0};
     mult = {1.0f, 1.0f, 1.0f, 1.0f};
+    buffMult = {1.0f, 1.0f, 1.0f, 1.0f};
 
     level=0;
     hp = getFinalMaxHp();
+    luck = 0;
+}
+
+void Character::resetBuffs()
+{
+    buffStat = {0, 0, 0, 0};
+    buffMult = {1.0f, 1.0f, 1.0f, 1.0f};
 }
 bool Character::isAlive() const
 {
@@ -30,4 +39,12 @@ int Character::attack() const
 void Character::levelUp()
 {
     level++;
+}
+
+void Character::heal(int amount)
+{
+    hp += amount;
+    if (hp > getFinalMaxHp()) {
+        hp = getFinalMaxHp();
+    }
 }

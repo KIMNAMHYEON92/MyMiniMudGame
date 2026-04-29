@@ -4,8 +4,34 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <cstdlib>
+#include <cmath>
+#include "Skill.h"
 
 using namespace std;
+
+bool checkSkillProbability(int baseProb, int effectiveLuck) {
+    int totalRolls = 1 + (std::abs(effectiveLuck) / 100);
+    if ((std::rand() % 100) < (std::abs(effectiveLuck) % 100)) {
+        totalRolls += 1;
+    }
+
+    if (effectiveLuck >= 0) {
+        for (int i = 0; i < totalRolls; ++i) {
+            if ((std::rand() % 100) < baseProb) {
+                return true;
+            }
+        }
+        return false;
+    } else {
+        for (int i = 0; i < totalRolls; ++i) {
+            if ((std::rand() % 100) >= baseProb) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
 
 Battle::Battle(Player& player, Monster& monster): player(player), monster(monster){}
 
@@ -18,48 +44,101 @@ bool Battle::run()
     cout << "\n";
     
     UI::Pause();
+    auto evaluateTriggers = [&](Character* character, Trigger triggerType, int effectiveLuck) {
+        for (Skill* skill : character->getActiveSkills()) {
+            if (skill->trigger == triggerType) {
+                if (checkSkillProbability(skill->baseProbability, effectiveLuck)) {
+                    skill->isCharged = true;
+                }
+            }
+        }
+    };
+
+    auto executeAttackPhase = [&](Character* attacker, Character* defender, int attackerLuck, int defenderLuck, std::string attackText, std::string attackerName, std::string defenderName) {
+        evaluateTriggers(defender, Trigger::ON_DEFEND, defenderLuck);
+
+        std::vector<Skill*> defendSkills;
+        for (Skill* skill : defender->getActiveSkills()) {
+            if (skill->trigger == Trigger::ON_DEFEND && skill->isCharged) {
+                defendSkills.push_back(skill);
+            }
+        }
+        if (!defendSkills.empty()) {
+            Skill* chosenSkill = defendSkills[std::rand() % defendSkills.size()];
+            chosenSkill->execute(defender, attacker);
+            chosenSkill->isCharged = false;
+        }
+
+        if (!attacker->isAlive() || !defender->isAlive()) return;
+
+        evaluateTriggers(attacker, Trigger::ON_ATTACK, attackerLuck);
+
+        std::vector<Skill*> attackSkills;
+        for (Skill* skill : attacker->getActiveSkills()) {
+            if (skill->trigger == Trigger::ON_ATTACK && skill->isCharged) {
+                attackSkills.push_back(skill);
+            }
+        }
+
+        if (!attackSkills.empty()) {
+            Skill* chosenSkill = attackSkills[std::rand() % attackSkills.size()];
+            chosenSkill->execute(attacker, defender);
+            chosenSkill->isCharged = false;
+        } else {
+            cout << "  " << attackText << "\n";
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+            int dmg = defender->takeDamage(attacker->attack());
+            UI::PrintMessage(attackerName + " attacks! " + defenderName + "'s HP -" + to_string(dmg));
+        }
+    };
+
     while (player.getHp()>0 && monster.getHp()>0)
     {
         UI::ClearScreen();
         UI::PrintTitle("Battle: " + player.getNick() + " vs " + monster.getName());
         cout << "\n";
 
+        evaluateTriggers(&player, Trigger::ON_TURN_START, player.getLuck());
+        for (Skill* skill : player.getActiveSkills()) {
+            if (skill->trigger == Trigger::ON_TURN_START && skill->isCharged) {
+                skill->execute(&player, &monster);
+                skill->isCharged = false;
+            }
+        }
+
+        evaluateTriggers(&monster, Trigger::ON_TURN_START, -player.getLuck());
+        for (Skill* skill : monster.getActiveSkills()) {
+            if (skill->trigger == Trigger::ON_TURN_START && skill->isCharged) {
+                skill->execute(&monster, &player);
+                skill->isCharged = false;
+            }
+        }
+
+        if (!player.isAlive() || !monster.isAlive()) break;
+
         if (player.getFinalSpd() > monster.getFinalSpd())
         {
-            cout << "  /// SLASH ///\n";
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
-            int dmg = monster.takeDamage(player.attack());
-            UI::PrintMessage(player.getNick() + " attacks! " + monster.getName() + "'s HP -" + to_string(dmg));
-            if (monster.isAlive())
+            executeAttackPhase(&player, &monster, player.getLuck(), -player.getLuck(), "/// SLASH ///", player.getNick(), monster.getName());
+            if (monster.isAlive() && player.isAlive())
             {
-                cout << "  *** SMASH ***\n";
-                std::this_thread::sleep_for(std::chrono::milliseconds(200));
-                int mdmg = player.takeDamage(monster.attack());
-                UI::PrintMessage(monster.getName() + " attacks! " + player.getNick() + "'s HP -" + to_string(mdmg));
-            }
-            else
-            {
-                UI::PrintMessage("Last hit to " + monster.getName() + "!");
+                executeAttackPhase(&monster, &player, -player.getLuck(), player.getLuck(), "*** SMASH ***", monster.getName(), player.getNick());
             }
         }
         else
         {
-            cout << "  *** SMASH ***\n";
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
-            int mdmg = player.takeDamage(monster.attack());
-            UI::PrintMessage(monster.getName() + " attacks! " + player.getNick() + "'s HP -" + to_string(mdmg));
-            if (player.isAlive())
+            executeAttackPhase(&monster, &player, -player.getLuck(), player.getLuck(), "*** SMASH ***", monster.getName(), player.getNick());
+            if (player.isAlive() && monster.isAlive())
             {
-                cout << "  /// SLASH ///\n";
-                std::this_thread::sleep_for(std::chrono::milliseconds(200));
-                int dmg = monster.takeDamage(player.attack());
-                UI::PrintMessage(player.getNick() + " attacks! " + monster.getName() + "'s HP -" + to_string(dmg));
-            }
-            else
-            {
-                UI::PrintMessage("Last hit to " + player.getNick() + "!");
+                executeAttackPhase(&player, &monster, player.getLuck(), -player.getLuck(), "/// SLASH ///", player.getNick(), monster.getName());
             }
         }
+
+        if (!monster.isAlive()) {
+             UI::PrintMessage("Last hit to " + monster.getName() + "!");
+        } else if (!player.isAlive()) {
+             UI::PrintMessage("Last hit to " + player.getNick() + "!");
+        }
+
         cout << "\n";
 
         UI::PrintHealthBar(player.getNick(), player.getHp(), player.getFinalMaxHp());
@@ -72,6 +151,9 @@ bool Battle::run()
     {
         player.gainExp(monster.getExpReward());
     }
+
+    player.resetBuffs();
+    monster.resetBuffs();
 
     cout << "\n";
     UI::Pause();
