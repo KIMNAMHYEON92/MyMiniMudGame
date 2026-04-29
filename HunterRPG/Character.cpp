@@ -1,30 +1,30 @@
 ﻿#include "Character.h"
 
 Character::Character(int atk, int def, int spd, int maxHp)
-    : atk(atk), def(def), spd(spd), maxHp(maxHp)
 {
+    baseStat = {atk, def, spd, maxHp};
+    itemStat = {0, 0, 0, 0};
+    mult = {1.0f, 1.0f, 1.0f, 1.0f};
+
     level=0;
-    hp = maxHp;
+    hp = getFinalMaxHp();
 }
 bool Character::isAlive() const
 {
     return hp>0;
 }
-void Character::takeDamage(int damage)
+int Character::takeDamage(int rawDamage)
 {
-    if (damage>0)
-    {
-        hp -= damage;
-    }
-    else
-    {
-        hp -= 1;
-    }
+    int damage = (int)(rawDamage * (100.0 / (100.0 + getFinalDef())));
+    if (damage < 1) damage = 1;
+
+    hp -= damage;
     if (hp < 0) hp = 0;
+    return damage;
 }
 int Character::attack() const
 {
-    return atk;
+    return getFinalAtk();
 }
 
 void Character::levelUp()

@@ -95,3 +95,18 @@ void UI::PrintHealthBar(const string& name, int currentHp, int maxHp, int length
     cout << string(empty, '-');
     cout << "] " << currentHp << " / " << maxHp << "\n";
 }
+
+void UI::PrintGateProgression(int currentIndex, int totalMonsters)
+{
+    cout << "  Gate Progress: [Entrance] -> ";
+    for (int i = 0; i < totalMonsters; ++i) {
+        if (i < currentIndex) {
+            cout << "[X] -> ";
+        } else if (i == currentIndex) {
+            cout << "[*YOU*] -> ";
+        } else {
+            cout << "[M" << (i+1) << "] -> ";
+        }
+    }
+    cout << "[Clear]\n";
+}
