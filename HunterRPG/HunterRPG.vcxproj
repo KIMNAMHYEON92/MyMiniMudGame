@@ -168,6 +168,7 @@
     <ClInclude Include="Battle.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Job.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="UI.h" />

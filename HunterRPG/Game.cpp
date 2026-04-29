@@ -36,7 +36,10 @@ void Game::createPlayer() {
 
     UI::ClearScreen();
     cout << AsciiArtManager::GetTitleArt();
-    UI::PrintTitle("HUNTER RPG");
+    UI::Pause();
+
+    UI::ClearScreen();
+    UI::PrintTitle("Welcome to HUNTER RPG");
     cout << "nickname : ";
     cin >> nick;
     cout << "\n";
