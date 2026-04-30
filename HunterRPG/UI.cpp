@@ -1,4 +1,5 @@
 #include "UI.h"
+#include "Monster.h"
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
@@ -96,16 +97,20 @@ void UI::PrintHealthBar(const string& name, int currentHp, int maxHp, int length
     cout << "] " << currentHp << " / " << maxHp << "\n";
 }
 
-void UI::PrintGateProgression(int currentIndex, int totalMonsters)
+void UI::PrintGateProgression(int currentIndex, const std::vector<Monster>& monsters)
 {
     cout << "  Gate Progress: [Entrance] -> ";
-    for (int i = 0; i < totalMonsters; ++i) {
-        if (i < currentIndex) {
+    for (size_t i = 0; i < monsters.size(); ++i) {
+        if ((int)i < currentIndex) {
             cout << "[X] -> ";
-        } else if (i == currentIndex) {
+        } else if ((int)i == currentIndex) {
             cout << "[*YOU*] -> ";
         } else {
-            cout << "[M" << (i+1) << "] -> ";
+            if (monsters[i].getIsElite()) {
+                cout << "[E" << (i+1) << "] -> ";
+            } else {
+                cout << "[M" << (i+1) << "] -> ";
+            }
         }
     }
     cout << "[Clear]\n";

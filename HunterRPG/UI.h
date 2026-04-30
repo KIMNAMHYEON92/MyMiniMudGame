@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 
+class Monster;
+
 class UI
 {
 public:
@@ -31,5 +33,5 @@ public:
     static void PrintHealthBar(const std::string& name, int currentHp, int maxHp, int length = 20);
 
     // Gate Progression Visual
-    static void PrintGateProgression(int currentIndex, int totalMonsters);
+    static void PrintGateProgression(int currentIndex, const std::vector<Monster>& monsters);
 };

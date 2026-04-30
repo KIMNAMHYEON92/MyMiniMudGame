@@ -1,10 +1,14 @@
 ﻿#pragma once
 
+#include <string>
+
 struct Stat {
     int atk;
     int def;
     int spd;
     int maxHp;
+    int luck = 0;
+    std::string rarityName = "Normal";
 };
 
 struct StatMultiplier {
@@ -12,9 +16,9 @@ struct StatMultiplier {
     float def;
     float spd;
     float maxHp;
+    float luck = 1.0f;
 };
 
-#include <string>
 #include <vector>
 
 class Skill;
@@ -28,7 +32,7 @@ protected:
     StatMultiplier mult;
     StatMultiplier buffMult;
 
-    int hp, level, luck;
+    int hp, level;
 public:
     Character(int atk, int def, int spd, int maxHp);
     virtual ~Character(){};
@@ -37,11 +41,11 @@ public:
     int getFinalDef() const { return (int)((baseStat.def + itemStat.def + buffStat.def) * mult.def * buffMult.def); }
     int getFinalSpd() const { return (int)((baseStat.spd + itemStat.spd + buffStat.spd) * mult.spd * buffMult.spd); }
     int getFinalMaxHp() const { return (int)((baseStat.maxHp + itemStat.maxHp + buffStat.maxHp) * mult.maxHp * buffMult.maxHp); }
+    int getFinalLuck() const { return (int)((baseStat.luck + itemStat.luck + buffStat.luck) * mult.luck * buffMult.luck); }
 
     int getHp(){return hp;};
     int getLevel(){return level;};
-    int getLuck() const { return luck; }
-    void setLuck(int newLuck) { luck = newLuck; }
+    void addLuckBuff(int amount) { buffStat.luck += amount; }
     void resetBuffs();
     bool isAlive() const;
     virtual int takeDamage(int damage);

@@ -104,7 +104,7 @@ bool Battle::run()
         UI::PrintTitle("Battle: " + player.getNick() + " vs " + monster.getName());
         cout << "\n";
 
-        evaluateTriggers(&player, Trigger::ON_TURN_START, player.getLuck());
+        evaluateTriggers(&player, Trigger::ON_TURN_START, player.getFinalLuck());
         for (Skill* skill : player.getActiveSkills()) {
             if (skill->trigger == Trigger::ON_TURN_START && skill->isCharged) {
                 skill->execute(&player, &monster);
@@ -112,7 +112,7 @@ bool Battle::run()
             }
         }
 
-        evaluateTriggers(&monster, Trigger::ON_TURN_START, -player.getLuck());
+        evaluateTriggers(&monster, Trigger::ON_TURN_START, -player.getFinalLuck());
         for (Skill* skill : monster.getActiveSkills()) {
             if (skill->trigger == Trigger::ON_TURN_START && skill->isCharged) {
                 skill->execute(&monster, &player);
@@ -124,18 +124,18 @@ bool Battle::run()
 
         if (player.getFinalSpd() > monster.getFinalSpd())
         {
-            executeAttackPhase(&player, &monster, player.getLuck(), -player.getLuck(), "/// SLASH ///", player.getNick(), monster.getName());
+            executeAttackPhase(&player, &monster, player.getFinalLuck(), -player.getFinalLuck(), "/// SLASH ///", player.getNick(), monster.getName());
             if (monster.isAlive() && player.isAlive())
             {
-                executeAttackPhase(&monster, &player, -player.getLuck(), player.getLuck(), "*** SMASH ***", monster.getName(), player.getNick());
+                executeAttackPhase(&monster, &player, -player.getFinalLuck(), player.getFinalLuck(), "*** SMASH ***", monster.getName(), player.getNick());
             }
         }
         else
         {
-            executeAttackPhase(&monster, &player, -player.getLuck(), player.getLuck(), "*** SMASH ***", monster.getName(), player.getNick());
+            executeAttackPhase(&monster, &player, -player.getFinalLuck(), player.getFinalLuck(), "*** SMASH ***", monster.getName(), player.getNick());
             if (player.isAlive() && monster.isAlive())
             {
-                executeAttackPhase(&player, &monster, player.getLuck(), -player.getLuck(), "/// SLASH ///", player.getNick(), monster.getName());
+                executeAttackPhase(&player, &monster, player.getFinalLuck(), -player.getFinalLuck(), "/// SLASH ///", player.getNick(), monster.getName());
             }
         }
 
