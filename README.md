@@ -1,4 +1,4 @@
-# Hunter RPG (v4.0 Update)
+# Hunter RPG (v5.0 Update)
 
 Hunter RPG is a text-based C++ Role-Playing Game (MUD style) where you step into the shoes of a newly awakened Hunter.
 
@@ -6,6 +6,10 @@ Explore different gates, battle procedurally generated monsters, and survive as 
 
 ## Features
 
+*   **Random Event Engine (Post-Gate Events):** Post-gate events that can boost your luck dynamically.
+*   **Structured LUCK Stat:** Luck is structured dynamically into characters.
+*   **Item Rarity System (Normal/Magic/Rare):** Drops categorized dynamically by their rarity value based on luck and elite biases.
+*   **Elite Monster UI Visibility:** Identify Elite Monsters directly on the progression bar!
 *   **Command-Driven Battle System:** Everything is a Skill. Even basic attacks are skills in the newly updated system.
 *   **Highest-Priority Skill Execution:** Skills with higher priority (e.g. signature skills) are executed over basic attacks when charged.
 *   **Procedural Elite Monster System:** Monsters have a chance to spawn as Elite variants with 1.5x stats, a signature skill, and "[Elite]" title.

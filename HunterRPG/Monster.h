@@ -18,6 +18,11 @@ private:
     bool isElite;
 public:
     Monster(int atk, int def, int spd, int maxHp, const string& name, int expReward);
+    Monster(const Monster&) = delete;
+    Monster& operator=(const Monster&) = delete;
+    Monster(Monster&&) noexcept = default;
+    Monster& operator=(Monster&&) noexcept = default;
+
     int getExpReward() const { return expReward;}
     string getName() const override { return name; }
     vector<int> getCode() const { return code; }

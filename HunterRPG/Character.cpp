@@ -2,21 +2,20 @@
 
 Character::Character(int atk, int def, int spd, int maxHp)
 {
-    baseStat = {atk, def, spd, maxHp};
-    itemStat = {0, 0, 0, 0};
-    buffStat = {0, 0, 0, 0};
-    mult = {1.0f, 1.0f, 1.0f, 1.0f};
-    buffMult = {1.0f, 1.0f, 1.0f, 1.0f};
+    baseStat = {atk, def, spd, maxHp, 0, "Normal"};
+    itemStat = {0, 0, 0, 0, 0, "Normal"};
+    buffStat = {0, 0, 0, 0, 0, "Normal"};
+    mult = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+    buffMult = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
 
     level=0;
     hp = getFinalMaxHp();
-    luck = 0;
 }
 
 void Character::resetBuffs()
 {
-    buffStat = {0, 0, 0, 0};
-    buffMult = {1.0f, 1.0f, 1.0f, 1.0f};
+    buffStat = {0, 0, 0, 0, 0, "Normal"};
+    buffMult = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
 }
 bool Character::isAlive() const
 {

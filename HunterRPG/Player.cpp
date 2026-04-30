@@ -13,7 +13,7 @@ Player::Player(int atk, int def, int spd, int maxHp, const string& nick, std::un
 
     exp=0;
     expToNextLevel=level*10;
-    inventory={0,0,0,0};
+    inventory={0,0,0,0,0};
 }
 void Player::gainExp(int amount){
     exp+=amount;
@@ -60,7 +60,7 @@ void Player::gainExp(int amount){
 }
 Stat Player::generateLoot(int price, int bias){
     srand((unsigned int)time(NULL));
-    Stat newItem = {0, 0, 0, 0};
+    Stat newItem = {0, 0, 0, 0, 0, "Normal"};
     int rank = price * 4;
     for (int i = 0; i < rank; i++)
     {
@@ -77,6 +77,14 @@ Stat Player::generateLoot(int price, int bias){
     newItem.def += bias;
     newItem.spd += bias;
     newItem.maxHp += bias;
+
+    if (bias >= 10) {
+        newItem.rarityName = "Rare";
+    } else if (bias > 0 && bias < 10) {
+        newItem.rarityName = "Magic";
+    } else {
+        newItem.rarityName = "Normal";
+    }
 
     return newItem;
 }

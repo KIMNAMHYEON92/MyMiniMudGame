@@ -10,6 +10,7 @@
 #include "UI.h"
 #include "AsciiArtManager.h"
 #include "Job.h"
+#include "Event.h"
 
 using namespace std;
 
@@ -59,27 +60,27 @@ void Game::createPlayer() {
     {
     case 1:
         job = std::make_unique<MeleeDealer>();
-        classBonus={20,20,20,200};
+        classBonus={20,20,20,200,0};
         break;
     case 2:
         job = std::make_unique<RangeDealer>();
-        classBonus={30,10,30,100};
+        classBonus={30,10,30,100,0};
         break;
     case 3:
         job = std::make_unique<SpellDealer>();
-        classBonus={40,10,20,100};
+        classBonus={40,10,20,100,0};
         break;
     case 4:
         job = std::make_unique<Tanker>();
-        classBonus={10,30,10,300};
+        classBonus={10,30,10,300,0};
         break;
     case 5:
         job = std::make_unique<Healer>();
-        classBonus={10,10,10,500};
+        classBonus={10,10,10,500,0};
         break;
     default:
         job = std::make_unique<NoneJob>();
-        classBonus={10,10,10,100};
+        classBonus={10,10,10,100,0};
         UI::PrintMessage("Wrong choice, default class None (ATK: 10, DEF: 10, SPD: 10, MAX HP: 100)");
         break;
     }
@@ -157,7 +158,7 @@ void Game::turnLoop() {
         {
             int range = spawnRange +1;
             int spawnPower = minDifficulty + irand(0,range-1);
-            monBaseStat = {0,0,0,0};
+            monBaseStat = {0,0,0,0,0};
             for (int j=0;j<spawnPower;j++)
             {
                 int stat = irand(0,3);
@@ -183,7 +184,7 @@ void Game::turnLoop() {
         for (Monster& mon : monsters)
         {
             UI::ClearScreen();
-            UI::PrintGateProgression(monIndex, numMonsters);
+            UI::PrintGateProgression(monIndex, monsters);
             cout << "\n";
             UI::Pause();
 
@@ -204,7 +205,7 @@ void Game::turnLoop() {
             cout << "  * You cleared the gate! Appraisal time for looted items:\n\n";
             for (size_t i = 0; i < lootBox.size(); i++) {
                 Stat loot = lootBox[i];
-                cout << "  [Loot " << (i+1) << "] ATK:+" << loot.atk << " DEF:+" << loot.def << " SPD:+" << loot.spd << " HP:+" << loot.maxHp << "\n";
+                cout << "  [" << loot.rarityName << " Loot " << (i+1) << "] ATK:+" << loot.atk << " DEF:+" << loot.def << " SPD:+" << loot.spd << " HP:+" << loot.maxHp << "\n";
             }
             cout << "\n";
             cout << "  Current Item Stats -> ATK:+" << player->getItemStat().atk << " DEF:+" << player->getItemStat().def << " SPD:+" << player->getItemStat().spd << " HP:+" << player->getItemStat().maxHp << "\n";
@@ -218,6 +219,16 @@ void Game::turnLoop() {
             }
         }
         lootBox.clear();
+
+        if (player->isAlive()) {
+            if (irand(1, 100) <= 20) {
+                UI::ClearScreen();
+                UI::PrintTitle("Random Event");
+                std::unique_ptr<Event> randEvent = std::make_unique<LuckBoostEvent>();
+                randEvent->execute(player.get());
+                UI::Pause();
+            }
+        }
 
         if (!player->isAlive()) break;
     }
