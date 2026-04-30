@@ -167,7 +167,15 @@ void Game::turnLoop() {
             int def = 10 * (1 + (turn/7) + monBaseStat[1]);
             int spd = 10 * (1 + (turn/7) + monBaseStat[2]);
             int maxHp = 100 * (1 + (turn/7) + monBaseStat[3]);
-            monsters.push_back(Monster(atk,def,spd,maxHp,"",spawnPower));
+
+            Monster newMonster(atk, def, spd, maxHp, "", spawnPower);
+            newMonster.naming(); // Naming must happen before makeElite to get element index
+
+            if (irand(1, 100) <= 15) {
+                newMonster.makeElite();
+            }
+
+            monsters.push_back(std::move(newMonster));
         }
         UI::Pause();
 
@@ -179,13 +187,13 @@ void Game::turnLoop() {
             cout << "\n";
             UI::Pause();
 
-            mon.naming();
             Battle battle = Battle(*player,mon);
             bool result = battle.run();
             if (!result) break;
 
             if (player->isAlive()) {
-                lootBox.push_back(player->generateLoot(mon.getExpReward()));
+                int bias = mon.getIsElite() ? 10 : 0;
+                lootBox.push_back(player->generateLoot(mon.getExpReward(), bias));
             }
             monIndex++;
         }

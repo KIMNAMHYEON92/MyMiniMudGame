@@ -23,41 +23,59 @@ public:
 
 class MeleeDealer : public Job {
 public:
-    MeleeDealer() { skills.push_back(std::make_unique<HeavyStrike>()); }
+    MeleeDealer() {
+        skills.push_back(std::make_unique<BasicAttack>());
+        skills.push_back(std::make_unique<HeavyStrike>());
+    }
     std::string getName() const override { return "MeleeDealer"; }
     StatMultiplier getMultiplier() const override { return {1.2f, 1.1f, 1.0f, 1.2f}; }
 };
 
 class RangeDealer : public Job {
 public:
-    RangeDealer() { skills.push_back(std::make_unique<HeavyStrike>()); }
+    RangeDealer() {
+        skills.push_back(std::make_unique<BasicAttack>());
+        skills.push_back(std::make_unique<HeavyStrike>());
+    }
     std::string getName() const override { return "RangeDealer"; }
     StatMultiplier getMultiplier() const override { return {1.3f, 0.9f, 1.2f, 1.0f}; }
 };
 
 class SpellDealer : public Job {
 public:
-    SpellDealer() { skills.push_back(std::make_unique<HeavyStrike>()); }
+    SpellDealer() {
+        skills.push_back(std::make_unique<BasicAttack>());
+        skills.push_back(std::make_unique<HeavyStrike>());
+    }
     std::string getName() const override { return "SpellDealer"; }
     StatMultiplier getMultiplier() const override { return {1.5f, 0.8f, 1.1f, 0.9f}; }
 };
 
 class Tanker : public Job {
 public:
-    Tanker() { skills.push_back(std::make_unique<CounterAttack>()); }
+    Tanker() {
+        skills.push_back(std::make_unique<BasicAttack>());
+        skills.push_back(std::make_unique<CounterAttack>());
+    }
     std::string getName() const override { return "Tanker"; }
     StatMultiplier getMultiplier() const override { return {0.9f, 1.5f, 0.8f, 1.5f}; }
 };
 
 class Healer : public Job {
 public:
-    Healer() { skills.push_back(std::make_unique<HealSkill>()); }
+    Healer() {
+        skills.push_back(std::make_unique<BasicAttack>());
+        skills.push_back(std::make_unique<HealSkill>());
+    }
     std::string getName() const override { return "Healer"; }
     StatMultiplier getMultiplier() const override { return {1.0f, 1.1f, 1.0f, 1.1f}; }
 };
 
 class NoneJob : public Job {
 public:
+    NoneJob() {
+        skills.push_back(std::make_unique<BasicAttack>());
+    }
     std::string getName() const override { return "None"; }
     StatMultiplier getMultiplier() const override { return {1.0f, 1.0f, 1.0f, 1.0f}; }
 };

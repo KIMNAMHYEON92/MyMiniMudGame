@@ -25,7 +25,7 @@ public:
     int getExpToNextLevel(){return expToNextLevel;}
     
     void gainExp(int amount);
-    Stat generateLoot(int price);
+    Stat generateLoot(int price, int bias = 0);
     void applyLoot(Stat item);
     Stat getItemStat() const { return itemStat; }
     int getScore();

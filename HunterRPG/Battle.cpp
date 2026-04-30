@@ -74,21 +74,27 @@ bool Battle::run()
         evaluateTriggers(attacker, Trigger::ON_ATTACK, attackerLuck);
 
         std::vector<Skill*> attackSkills;
+        int maxPriority = -1;
+
         for (Skill* skill : attacker->getActiveSkills()) {
             if (skill->trigger == Trigger::ON_ATTACK && skill->isCharged) {
-                attackSkills.push_back(skill);
+                if (skill->priority > maxPriority) {
+                    maxPriority = skill->priority;
+                    attackSkills.clear();
+                    attackSkills.push_back(skill);
+                } else if (skill->priority == maxPriority) {
+                    attackSkills.push_back(skill);
+                }
             }
         }
 
         if (!attackSkills.empty()) {
+            cout << "  " << attackText << "\n";
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+
             Skill* chosenSkill = attackSkills[std::rand() % attackSkills.size()];
             chosenSkill->execute(attacker, defender);
             chosenSkill->isCharged = false;
-        } else {
-            cout << "  " << attackText << "\n";
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
-            int dmg = defender->takeDamage(attacker->attack());
-            UI::PrintMessage(attackerName + " attacks! " + defenderName + "'s HP -" + to_string(dmg));
         }
     };
 
