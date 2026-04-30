@@ -58,7 +58,7 @@ void Player::gainExp(int amount){
         cout << "exp +" << amount << ", (exp: " << exp << " / " << expToNextLevel << ")\n";
     }
 }
-Stat Player::generateLoot(int price){
+Stat Player::generateLoot(int price, int bias){
     srand((unsigned int)time(NULL));
     Stat newItem = {0, 0, 0, 0};
     int rank = price * 4;
@@ -72,6 +72,12 @@ Stat Player::generateLoot(int price){
             case 3: newItem.maxHp += 100; break;
         }
     }
+
+    newItem.atk += bias;
+    newItem.def += bias;
+    newItem.spd += bias;
+    newItem.maxHp += bias;
+
     return newItem;
 }
 
