@@ -14,7 +14,7 @@ vector<Skill*> Monster::getActiveSkills() const {
     return rawSkills;
 }
 
-void Monster::makeElite()
+void Monster::makeElite(int turn, int spawnPower)
 {
     isElite = true;
     name = "[Elite] " + name;
@@ -25,16 +25,24 @@ void Monster::makeElite()
     baseStat.maxHp = (int)(baseStat.maxHp * 1.5);
     hp = getFinalMaxHp();
 
+    int baseLevel = std::max(1, spawnPower / 2);
+    int variance = turn / 3;
+    int skillLevel = std::max(1, baseLevel + (std::rand() % (variance * 2 + 1)) - variance);
+
     if (!code.empty()) {
         int elementIndex = code[2];
         if (elementIndex == 0) { // Fire
-            skills.push_back(std::make_unique<HeavyStrike>());
+            skills.push_back(std::make_unique<MagicExplosion>());
         } else if (elementIndex == 1) { // Wind
-            skills.push_back(std::make_unique<CounterAttack>());
+            skills.push_back(std::make_unique<Snipe>());
         } else if (elementIndex == 2) { // Water
-            skills.push_back(std::make_unique<HealSkill>());
+            skills.push_back(std::make_unique<DivineGrace>());
         } else if (elementIndex == 3) { // Soil
-            skills.push_back(std::make_unique<HeavyStrike>());
+            skills.push_back(std::make_unique<ShieldBash>());
+        }
+
+        if (skills.size() > 1) {
+            skills.back()->level = skillLevel;
         }
     }
 }

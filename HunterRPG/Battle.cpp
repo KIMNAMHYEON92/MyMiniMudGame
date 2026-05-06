@@ -35,14 +35,9 @@ bool checkSkillProbability(int baseProb, int effectiveLuck) {
 
 Battle::Battle(Player& player, Monster& monster): player(player), monster(monster){}
 
-bool Battle::run()
+bool Battle::run(int gateIndex, const std::vector<Monster>& monsters)
 {
-    UI::ClearScreen();
-    UI::PrintTitle("Battle Start with " + monster.getName());
-    cout << AsciiArtManager::GenerateMonsterArt(monster.getFinalAtk(), monster.getFinalDef(), monster.getFinalSpd(), monster.getFinalMaxHp()) << "\n";
-    UI::PrintMonsterStatus(monster.getName(), monster.getExpReward(), monster.getHp(), monster.getFinalMaxHp(), monster.getFinalAtk(), monster.getFinalDef(), monster.getFinalSpd());
-    cout << "\n";
-    
+    UI::RenderBattle(player, monster, gateIndex, monsters);
     UI::Pause();
     auto evaluateTriggers = [&](Character* character, Trigger triggerType, int effectiveLuck) {
         for (Skill* skill : character->getActiveSkills()) {
@@ -89,7 +84,7 @@ bool Battle::run()
         }
 
         if (!attackSkills.empty()) {
-            cout << "  " << attackText << "\n";
+            UI::PrintMessage(attackText);
             std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
             Skill* chosenSkill = attackSkills[std::rand() % attackSkills.size()];
@@ -100,10 +95,6 @@ bool Battle::run()
 
     while (player.getHp()>0 && monster.getHp()>0)
     {
-        UI::ClearScreen();
-        UI::PrintTitle("Battle: " + player.getNick() + " vs " + monster.getName());
-        cout << "\n";
-
         evaluateTriggers(&player, Trigger::ON_TURN_START, player.getFinalLuck());
         for (Skill* skill : player.getActiveSkills()) {
             if (skill->trigger == Trigger::ON_TURN_START && skill->isCharged) {
@@ -145,12 +136,7 @@ bool Battle::run()
              UI::PrintMessage("Last hit to " + player.getNick() + "!");
         }
 
-        cout << "\n";
-
-        UI::PrintHealthBar(player.getNick(), player.getHp(), player.getFinalMaxHp());
-        UI::PrintHealthBar(monster.getName(), monster.getHp(), monster.getFinalMaxHp());
-        cout << "\n";
-
+        UI::RenderBattle(player, monster, gateIndex, monsters);
         UI::Pause();
     }
     if (player.isAlive())
@@ -161,7 +147,5 @@ bool Battle::run()
     player.resetBuffs();
     monster.resetBuffs();
 
-    cout << "\n";
-    UI::Pause();
     return player.isAlive();
 }
