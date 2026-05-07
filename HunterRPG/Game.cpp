@@ -15,12 +15,27 @@
 using namespace std;
 
 void Game::run() {
-    createPlayer();
-    if (player) {
-        turnLoop();
-        gameOver();
+    while (currentState != GameState::EXIT) {
+        switch (currentState) {
+            case GameState::MAIN_MENU:
+                mainMenu();
+                break;
+            case GameState::CHAR_CREATION:
+                createPlayer();
+                break;
+            case GameState::IN_GAME:
+                turnLoop();
+                break;
+            case GameState::GAME_OVER:
+                gameOver();
+                break;
+            default:
+                currentState = GameState::EXIT;
+                break;
+        }
     }
 }
+
 int Game::irand(int min,int max)
 {    
     random_device rd;
@@ -29,15 +44,24 @@ int Game::irand(int min,int max)
     return dis(gen);
 }
 
+void Game::mainMenu() {
+    UI::ClearScreen();
+    cout << AsciiArtManager::GetTitleArt();
+    cout << "\n  [1] Start Game\n  [2] Exit\n\n  Choice: ";
+    int choice;
+    cin >> choice;
+    if (choice == 1) {
+        currentState = GameState::CHAR_CREATION;
+    } else {
+        currentState = GameState::EXIT;
+    }
+}
+
 void Game::createPlayer() {
     string nick;
     std::unique_ptr<Job> job;
     int classChoiceInput;
     vector<int> classBonus;
-
-    UI::ClearScreen();
-    cout << AsciiArtManager::GetTitleArt();
-    UI::Pause();
 
     UI::ClearScreen();
     UI::PrintTitle("Welcome to HUNTER RPG");
@@ -81,7 +105,7 @@ void Game::createPlayer() {
     default:
         job = std::make_unique<NoneJob>();
         classBonus={10,10,10,100,0};
-        UI::PrintMessage("Wrong choice, default class None (ATK: 10, DEF: 10, SPD: 10, MAX HP: 100)");
+        UI::PrintSystemMessage("Wrong choice, default class None (ATK: 10, DEF: 10, SPD: 10, MAX HP: 100)");
         break;
     }
     cout << "\n";
@@ -89,7 +113,7 @@ void Game::createPlayer() {
 
     player = std::make_unique<Player>(classBonus[0],classBonus[1],classBonus[2],classBonus[3],nick,std::move(job));
 
-    UI::PrintMessage("Creation Bonus!");
+    UI::PrintSystemMessage("Creation Bonus!");
     player->gainExp(5);
     UI::Pause();
 
@@ -98,6 +122,8 @@ void Game::createPlayer() {
     cout << "\n";
 
     UI::Pause();
+
+    currentState = GameState::IN_GAME;
 }
 
 void Game::turnLoop() {
@@ -127,24 +153,24 @@ void Game::turnLoop() {
         switch (gateChoice)
         {
         case 1:
-            UI::PrintMessage("Entered the Green Gate");
+            UI::PrintSystemMessage("Entered the Green Gate");
             break;
         case 2:
-            UI::PrintMessage("Entered the Yellow Gate");
+            UI::PrintSystemMessage("Entered the Yellow Gate");
             minDifficulty +=1;
             maxDifficulty +=1;
             break;
         case 3:
-            UI::PrintMessage("Entered the Red Gate");
+            UI::PrintSystemMessage("Entered the Red Gate");
             minDifficulty +=2;
             maxDifficulty +=2;
             break;
         case 4:
-            UI::PrintMessage("Entered the Chaos Gate");
+            UI::PrintSystemMessage("Entered the Chaos Gate");
             maxDifficulty +=8;
             break;
         default:
-            UI::PrintMessage("Entered the Chaos Gate");
+            UI::PrintSystemMessage("Entered the Chaos Gate");
             maxDifficulty +=8;
             break;
         }
@@ -152,7 +178,7 @@ void Game::turnLoop() {
         vector<Monster> monsters;
         int spawnRange = maxDifficulty - minDifficulty;
         int numMonsters = basenum + irand(0,2) + (turn/7);
-        UI::PrintMessage(to_string(numMonsters) + " monsters in gate");
+        UI::PrintSystemMessage(to_string(numMonsters) + " monsters in gate");
         cout << "  * Proceeding into the gate...\n\n";
         for (int i=0;i<numMonsters;i++)
         {
@@ -173,7 +199,7 @@ void Game::turnLoop() {
             newMonster.naming(); // Naming must happen before makeElite to get element index
 
             if (irand(1, 100) <= 15) {
-                newMonster.makeElite();
+                newMonster.makeElite(turn, spawnPower);
             }
 
             monsters.push_back(std::move(newMonster));
@@ -183,13 +209,10 @@ void Game::turnLoop() {
         int monIndex = 0;
         for (Monster& mon : monsters)
         {
-            UI::ClearScreen();
-            UI::PrintGateProgression(monIndex, monsters);
-            cout << "\n";
-            UI::Pause();
+            UI::messageLog.clear(); // Clear message log before battle
 
             Battle battle = Battle(*player,mon);
-            bool result = battle.run();
+            bool result = battle.run(monIndex, monsters);
             if (!result) break;
 
             if (player->isAlive()) {
@@ -214,7 +237,7 @@ void Game::turnLoop() {
             cin >> choice;
             if (choice > 0 && choice <= (int)lootBox.size()) {
                 player->applyLoot(lootBox[choice-1]);
-                UI::PrintMessage("Item equipped!");
+                UI::PrintSystemMessage("Item equipped!");
                 UI::Pause();
             }
         }
@@ -230,17 +253,30 @@ void Game::turnLoop() {
             }
         }
 
-        if (!player->isAlive()) break;
+        if (!player->isAlive()) {
+            currentState = GameState::GAME_OVER;
+            break;
+        }
     }
 }
 
 void Game::gameOver() {
-    if (!player->isAlive())
-    {
-        UI::ClearScreen();
-        UI::PrintTitle("GAME OVER");
+    UI::ClearScreen();
+    UI::PrintTitle("GAME OVER");
+    if (player) {
         int score = player->getScore();
-        UI::PrintMessage("Score: " + to_string(score));
-        cout << "\n";
+        UI::PrintSystemMessage("Score: " + to_string(score));
+    }
+    cout << "\n  [1] Return to Main Menu\n  [2] Exit\n\n  Choice: ";
+    int choice;
+    cin >> choice;
+
+    if (choice == 1) {
+        player.reset();
+        turn = 0;
+        lootBox.clear();
+        currentState = GameState::MAIN_MENU;
+    } else {
+        currentState = GameState::EXIT;
     }
 }

@@ -9,5 +9,5 @@ private:
     Monster& monster;
 public:
     Battle(Player& player, Monster& monster);
-    bool run();
+    bool run(int gateIndex, const std::vector<Monster>& monsters);
 };

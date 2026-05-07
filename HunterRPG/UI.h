@@ -1,12 +1,16 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <deque>
 
 class Monster;
+class Player;
 
 class UI
 {
 public:
+    static std::deque<std::string> messageLog;
+
     // 화면 초기화 및 일시정지 (플랫폼 호환성 고려)
     static void ClearScreen();
     static void Pause();
@@ -24,14 +28,17 @@ public:
     static void PrintStatus(const std::string& name, const std::string& job, int level, int hp, int maxHp, int atk, int def, int spd);
 
     // 몬스터 상태창 출력
-    static void PrintMonsterStatus(const std::string& name, int rank, int hp, int maxHp, int atk, int def, int spd);
+    static void PrintMonsterStatus(const std::string& name, int rank, int hp, int maxHp, int atk, int def, int spd, const std::string& skillName = "None", int skillLevel = 0);
 
     // 게임 내 시스템/전투 메시지 출력
     static void PrintMessage(const std::string& msg);
+    static void PrintSystemMessage(const std::string& msg);
     
     // 체력바(HP Bar) 시각화 출력
     static void PrintHealthBar(const std::string& name, int currentHp, int maxHp, int length = 20);
 
     // Gate Progression Visual
     static void PrintGateProgression(int currentIndex, const std::vector<Monster>& monsters);
+
+    static void RenderBattle(Player& player, Monster& monster, int gateIndex, const std::vector<Monster>& monsters);
 };

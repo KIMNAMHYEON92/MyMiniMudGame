@@ -27,7 +27,7 @@ public:
     string getName() const override { return name; }
     vector<int> getCode() const { return code; }
     void naming();
-    void makeElite();
+    void makeElite(int turn, int spawnPower);
     bool getIsElite() const { return isElite; }
     vector<Skill*> getActiveSkills() const override;
 };
